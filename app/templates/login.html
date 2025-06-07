@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - File Transfer App</title>
+    <style>
+      /* Copy styles từ index.html */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+      }
+
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        transition: transform 0.3s;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #4a5568;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+      .form-group input:focus {
+        border-color: #667eea;
+        outline: none;
+      }
+      .alert {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+      }
+      .alert-error {
+        background: #fff5f5;
+        color: #c53030;
+        border: 1px solid #feb2b2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔑 Đăng nhập</h1>
+      <div id="alert" class="alert"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input type="text" id="username" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" required />
+        </div>
+        <button type="submit" class="btn">Đăng nhập</button>
+      </form>
+      <p>
+        <a href="/register">Chưa có tài khoản? Đăng ký ngay</a>
+      </p>
+    </div>
+
+    <script>
+      document.getElementById("loginForm").onsubmit = async function (e) {
+        e.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const res = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await res.json();
+          if (data.status === "success") {
+            window.location.href = "/dashboard";
+          } else {
+            const alert = document.getElementById("alert");
+            alert.textContent = data.message;
+            alert.className = "alert alert-error";
+            alert.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+        }
+      };
+    </script>
+  </body>
+</html>

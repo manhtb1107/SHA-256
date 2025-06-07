@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký - File Transfer App</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+      }
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+      }
+      .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+      .alert {
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        display: none;
+      }
+      .alert-error {
+        background: #ffe6e6;
+        color: #c00;
+      }
+      .alert-success {
+        background: #f0fff4;
+        color: #2f855a;
+        border: 1px solid #9ae6b4;
+      }
+      a {
+        color: #667eea;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📝 Đăng ký</h1>
+      <div id="alert" class="alert"></div>
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input type="text" id="username" required minlength="3" />
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Xác nhận mật khẩu</label>
+          <input type="password" id="confirmPassword" required />
+        </div>
+        <button type="submit" class="btn">Đăng ký</button>
+      </form>
+      <p>
+        <a href="/login">Đã có tài khoản? Đăng nhập</a>
+      </p>
+    </div>
+
+    <script>
+      document.getElementById("registerForm").onsubmit = async function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        if (password !== confirmPassword) {
+          const alert = document.getElementById("alert");
+          alert.textContent = "Mật khẩu xác nhận không khớp!";
+          alert.className = "alert alert-error";
+          alert.style.display = "block";
+          return;
+        }
+
+        try {
+          // Sửa lại URL đúng route
+          const res = await fetch("/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await res.json();
+          const alert = document.getElementById("alert");
+          alert.textContent = data.message;
+          alert.className = `alert alert-${data.status}`;
+          alert.style.display = "block";
+
+          if (data.status === "success") {
+            setTimeout(() => {
+              // Sửa lại URL redirect
+              window.location.href = "/login";
+            }, 2000);
+          }
+        } catch (error) {
+          console.error("Registration error:", error);
+        }
+      };
+    </script>
+  </body>
+</html>
